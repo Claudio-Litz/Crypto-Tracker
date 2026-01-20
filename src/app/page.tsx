@@ -21,11 +21,16 @@ export default async function Home() {
   const txData = transactions || [];
 
   // Classe para as "Ilhas" (fundo cinza azulado, bordas redondas)
-  const islandClass = "bg-[#1A1F2E] rounded-3xl p-6 shadow-xl border border-white/5";
+  const islandClass = "bg-[#1A1F2E]/60 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/10 hover:border-blue-500/30 transition-all duration-300";
 
   return (
-    <main className="min-h-screen bg-[#0B0E14] text-slate-200 font-sans pb-20">
-      <div className="max-w-[1400px] mx-auto px-6">
+  // Adicionamos um gradiente radial sutil no fundo e texturas
+  <main className="min-h-screen bg-[#0B0E14] text-slate-200 font-sans pb-20 relative overflow-hidden">
+    
+    {/* Efeito de luz (Glow) no topo */}
+    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-900/20 blur-[120px] rounded-full pointer-events-none" />
+    
+    <div className="max-w-[1400px] mx-auto px-6 relative z-10">
         
         {/* Passo 2: O Header que criamos */}
         <Header />
