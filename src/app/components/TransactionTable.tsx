@@ -2,58 +2,56 @@
 
 import { supabase } from '@/src/lib/supabase';
 
-// Função auxiliar para formatar data de forma consistente
-// Isso evita o erro de "Hydration failed" entre servidor e cliente
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  // Força o formato dia/mês/ano para evitar confusão servidor/navegador
   return date.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 };
 
 export default function TransactionTable({ transactions }: { transactions: any[] }) {
   
   async function handleDelete(id: number) {
-    if (!confirm('Apagar registro?')) return;
+    if (!confirm('Apagar?')) return;
     const { error } = await supabase.from('transactions').delete().eq('id', id);
-    if (error) alert('Erro ao apagar');
+    if (error) alert('Erro');
     else window.location.reload();
   }
 
-  if (!transactions?.length) return <p className="text-gray-500 text-center py-4">Sem dados.</p>;
+  if (!transactions?.length) return <p className="text-slate-500 py-4 text-center">Nenhuma transação encontrada.</p>;
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-left text-sm text-gray-300">
-        <thead className="bg-gray-800 text-xs uppercase font-bold text-gray-400">
-          <tr>
-            <th className="p-3">Data</th>
-            <th className="p-3">Ativo</th>
-            <th className="p-3">Tipo</th>
-            <th className="p-3">Qtd</th>
-            <th className="p-3">Preço</th>
-            <th className="p-3">Total</th>
-            <th className="p-3 text-right">#</th>
+      <table className="w-full text-left text-sm border-separate border-spacing-y-2">
+        <thead>
+          <tr className="text-slate-500 text-xs font-bold uppercase tracking-wider">
+            <th className="pb-4 pl-4">Data</th>
+            <th className="pb-4">Ativo</th>
+            <th className="pb-4">Tipo</th>
+            <th className="pb-4">Valor</th>
+            <th className="pb-4 text-right pr-4">Ação</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-800">
+        <tbody>
           {transactions.map((t) => (
-            <tr key={t.id} className="hover:bg-gray-800/50 transition-colors">
-              {/* AQUI ESTAVA O ERRO: Agora usamos a função formatDate */}
-              <td className="p-3">{formatDate(t.date)}</td>
-              <td className="p-3 font-bold text-white uppercase">{t.symbol}</td>
-              <td className="p-3">
-                <span className={`px-2 py-1 rounded text-xs font-bold ${t.type === 'buy' ? 'bg-green-900 text-green-300 border border-green-800' : 'bg-red-900 text-red-300 border border-red-800'}`}>
-                    {t.type === 'buy' ? 'COMPRA' : 'VENDA'}
+            // AQUI: Fundo sutil para cada linha, cantos redondos, SEM borda branca
+            <tr key={t.id} className="bg-[#151925] hover:bg-[#12151f] transition-colors group">
+              <td className="py-4 pl-4 rounded-l-xl text-slate-400">{formatDate(t.date)}</td>
+              <td className="py-4 font-bold text-slate-200">
+                {t.symbol.toUpperCase()}
+              </td>
+              <td className="py-4">
+                <span className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide ${
+                  t.type === 'buy' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
+                }`}>
+                    {t.type === 'buy' ? 'Compra' : 'Venda'}
                 </span>
               </td>
-              <td className="p-3">{t.amount}</td>
-              <td className="p-3 text-blue-300 font-mono">$ {t.price}</td>
-              <td className="p-3 font-bold text-white font-mono">$ {(t.price * t.amount).toFixed(2)}</td>
-              <td className="p-3 text-right">
+              <td className="py-4 text-slate-200 font-medium">
+                $ {(t.price * t.amount).toFixed(2)}
+              </td>
+              <td className="py-4 rounded-r-xl text-right pr-4">
                 <button 
                   onClick={() => handleDelete(t.id)} 
-                  className="text-red-500 hover:text-red-400 hover:bg-red-900/20 p-2 rounded transition-all"
-                  title="Excluir Transação"
+                  className="text-slate-600 hover:text-rose-400 transition-colors"
                 >
                   ✕
                 </button>

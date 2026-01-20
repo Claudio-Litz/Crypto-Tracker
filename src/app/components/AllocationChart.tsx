@@ -2,7 +2,6 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
-// Interface corrige o erro vermelho do VS Code
 interface Transaction {
   symbol: string;
   amount: number;
@@ -14,7 +13,13 @@ const CORES = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899']
 
 export default function AllocationChart({ transactions }: { transactions: any[] }) {
   
-  if (!transactions || transactions.length === 0) return null;
+  if (!transactions || transactions.length === 0) {
+    return (
+        <div className="h-[300px] flex items-center justify-center text-gray-500 text-sm">
+            Sem dados para o gráfico.
+        </div>
+    );
+  }
 
   const holdings: { [key: string]: number } = {};
   const currentPrices: { [key: string]: number } = {};
@@ -36,9 +41,13 @@ export default function AllocationChart({ transactions }: { transactions: any[] 
     }));
 
   return (
-    <div className="h-full min-h-[400px] bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg flex flex-col items-center justify-center">
-      <h3 className="text-xl font-bold text-white mb-4 w-full text-left">Alocação</h3>
-      <div className="w-full h-full">
+    <div className="flex flex-col h-full bg-transparent">
+      <div className="p-4 border-b border-gray-800">
+          <h3 className="text-sm font-bold text-gray-200 uppercase tracking-wider">Alocação Atual</h3>
+      </div>
+      
+      {/* Container com altura FIXA para garantir que o gráfico renderize */}
+      <div className="w-full h-[300px] relative"> 
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -56,10 +65,10 @@ export default function AllocationChart({ transactions }: { transactions: any[] 
               ))}
             </Pie>
             <Tooltip 
-                formatter={(value: any) => [`$ ${value.toFixed(2)}`, 'Valor']}
-                contentStyle={{ backgroundColor: '#111827', borderColor: '#374151', color: '#fff' }}
+                contentStyle={{ backgroundColor: '#1F2937', borderColor: '#374151', borderRadius: '8px', color: '#fff' }}
+                formatter={(value: any) => [`$${value.toFixed(2)}`, 'Valor']}
             />
-            <Legend />
+            <Legend verticalAlign="bottom" height={36} iconType="circle"/>
           </PieChart>
         </ResponsiveContainer>
       </div>
