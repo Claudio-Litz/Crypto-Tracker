@@ -6,11 +6,9 @@ import AllocationChart from "./components/AllocationChart";
 import HistoryChart from "./components/HistoryChart";
 import Header from "./components/Header";
 
-// Força atualização dos dados a cada acesso
 export const revalidate = 0;
 
 export default async function Home() {
-  // Busca dados ordenados
   const { data: transactions, error } = await supabase
     .from('transactions')
     .select('*')
@@ -20,61 +18,74 @@ export default async function Home() {
   
   const txData = transactions || [];
 
-  // Estilo dos Cards (Vidro translúcido)
-  const islandClass = "bg-[#1A1F2E]/80 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/5 h-full";
+  // Configuração Base dos Blocos Principais
+  const baseBlock = "rounded-[40px] p-6 shadow-2xl border-none flex flex-col justify-center";
+
+  // Configuração dos Títulos
+  const titleClass = "text-xl font-bold text-white mb-1 text-center";
+  const subTitleClass = "text-white/40 text-[10px] text-center mb-6 uppercase tracking-[0.2em] font-bold";
 
   return (
-    <main className="min-h-screen bg-[#0B0E14] text-slate-200 font-sans pb-20 relative overflow-hidden">
+    <main className="min-h-screen bg-[#020202] text-slate-200 font-sans pb-24 relative selection:bg-indigo-500/30">
       
-      {/* Luz de fundo (Glow) */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-900/10 blur-[120px] rounded-full pointer-events-none" />
+      {/* Luz de fundo suave */}
+      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[500px] bg-blue-900/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[500px] bg-purple-900/10 blur-[150px] rounded-full pointer-events-none" />
 
-      <div className="max-w-[1400px] mx-auto px-6 relative z-10">
+      <div className="max-w-[1600px] mx-auto px-6 pt-8 relative z-10">
         <Header />
 
         <div className="flex flex-col gap-8">
           
-          {/* 1. Resumo do Patrimônio (Cards Superiores) */}
-          <section className="w-full">
+          {/* 1. SECTION: CARDS (Topo) */}
+          <section>
             <SummaryCards transactions={txData} />
           </section>
 
-          {/* 2. Gráfico de Evolução (Largura Total) */}
-          <section className={islandClass}>
-             <HistoryChart transactions={txData} />
-          </section>
-
-          {/* 3. AQUI ESTÁ A MUDANÇA: GRID LADO A LADO */}
-          {/* md:grid-cols-2 garante que em notebooks e monitores eles fiquem lado a lado */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+          {/* 2. SECTION: GRÁFICOS (Lado a Lado) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            {/* Bloco Esquerda: Gráfico de Pizza */}
-            <div className={islandClass}>
-              <h3 className="text-lg font-bold text-white mb-4 ml-2 border-l-4 border-purple-500 pl-3">
-                Alocação de Ativos
-              </h3>
-              <div className="flex items-center justify-center min-h-[400px]">
-                <AllocationChart transactions={txData} />
-              </div>
+            {/* Gráfico de Evolução (Ocupa 8 colunas - Mais largo) */}
+            <div className={`lg:col-span-8 ${baseBlock} bg-[#080b14]`}>
+               <HistoryChart transactions={txData} />
             </div>
 
-            {/* Bloco Direita: Formulário */}
-            <div className={islandClass}>
-              <h2 className="text-lg font-bold text-white mb-6 ml-2 border-l-4 border-blue-500 pl-3">
-                Nova Transação
-              </h2>
+            {/* Gráfico de Pizza (Ocupa 4 colunas - Mais quadrado) */}
+            <div className={`lg:col-span-4 ${baseBlock} bg-[#0f0c1f]`}>
+              <div>
+                <h3 className={titleClass}>Alocação</h3>
+                <p className={subTitleClass}>Distribuição Atual</p>
+                <div className="bg-black/20 rounded-[30px] p-2">
+                   <AllocationChart transactions={txData} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. SECTION: OPERACIONAL (Formulário + Tabela) */}
+          {/* Aqui atendemos seu pedido: Form na Esquerda, Tabela na Direita */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* Formulário (Esquerda - 4 Colunas - Mais estreito) */}
+            <div className={`lg:col-span-4 ${baseBlock} bg-[#0a0a0a]`}>
+              <h2 className={titleClass}>Nova Transação</h2>
+              <p className={subTitleClass}>Registrar Operação</p>
+              
+              {/* O Form já tem seu container interno, então só renderizamos */}
               <TransactionForm />
             </div>
 
-          </div>
+            {/* Tabela (Direita - 8 Colunas - Mais largo para caber dados) */}
+            <div className={`lg:col-span-8 ${baseBlock} bg-[#050505]`}>
+              <div className="mb-2">
+                <h2 className={titleClass}>Histórico</h2>
+                <p className={subTitleClass}>Extrato Completo</p>
+              </div>
+              
+              <TransactionTable transactions={txData} />
+            </div>
 
-          {/* 4. Tabela de Histórico (Fica embaixo ocupando tudo) */}
-          <section className={islandClass}>
-            <h2 className="text-lg font-bold text-white mb-6 ml-2 border-l-4 border-emerald-500 pl-3">
-              Histórico Completo
-            </h2>
-            <TransactionTable transactions={txData} />
-          </section>
+          </div>
 
         </div>
       </div>

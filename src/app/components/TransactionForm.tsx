@@ -6,7 +6,8 @@ import { supabase } from '@/src/lib/supabase';
 const COIN_MAP: { [key: string]: string } = {
   btc: 'bitcoin', eth: 'ethereum', sol: 'solana', ada: 'cardano',
   doge: 'dogecoin', dot: 'polkadot', matic: 'matic-network',
-  link: 'chainlink', usdt: 'tether', xrp: 'ripple', bnb: 'binancecoin'
+  link: 'chainlink', usdt: 'tether', xrp: 'ripple', bnb: 'binancecoin',
+  ltc: 'litecoin', atom: 'cosmos', uni: 'uniswap'
 };
 
 export default function TransactionForm() {
@@ -23,6 +24,7 @@ export default function TransactionForm() {
     setDate(today);
   }, []);
 
+  // Busca de preço automática
   useEffect(() => {
     const fetchPrice = async () => {
       if (symbol.length < 3 || !date) return;
@@ -32,102 +34,109 @@ export default function TransactionForm() {
       try {
         const cleanSymbol = symbol.toLowerCase().trim();
         const coinId = COIN_MAP[cleanSymbol] || cleanSymbol;
-        
         const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`);
+        if (!res.ok) throw new Error('Erro API');
         const data = await res.json();
-        
-        if (data[coinId]?.usd) {
-          setPrice(data[coinId].usd.toString());
-        }
+        const foundPrice = data[coinId]?.usd;
+        if (foundPrice) setPrice(foundPrice.toString());
       } catch (error) {
-        console.error('Erro ao buscar preço', error);
+        console.error(error);
       } finally {
         setFetchingPrice(false);
       }
     };
 
-    const timer = setTimeout(fetchPrice, 800);
-    return () => clearTimeout(timer);
+    const timeoutId = setTimeout(() => { if(symbol) fetchPrice(); }, 800);
+    return () => clearTimeout(timeoutId);
   }, [symbol, date]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!price || !amount || !symbol) return;
+    if (!price || !symbol || !amount) return;
     setLoading(true);
 
-    const { error } = await supabase.from('transactions').insert([{
-      symbol: symbol.toUpperCase(),
-      amount: parseFloat(amount),
-      price: parseFloat(price),
-      date: date, // YYYY-MM-DD
-      type
-    }]);
+    const { error } = await supabase.from('transactions').insert({
+      type, symbol: symbol.toLowerCase(), amount: parseFloat(amount), price: parseFloat(price), date
+    });
 
     setLoading(false);
     if (error) alert('Erro ao salvar!');
-    else window.location.reload();
-  };
+    else {
+      setSymbol(''); setAmount(''); setPrice('');
+      window.location.reload();
+    }
+  }
 
-  // Estilo comum para os inputs para garantir consistência visual
-  const inputClass = "w-full p-3 rounded-xl bg-[#1A1F2E] border border-gray-700 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all font-medium";
-  const labelClass = "block text-xs font-bold text-gray-400 mb-1.5 ml-1";
+  // Estilos
+  const inputClass = "w-full bg-[#0a0a0a] text-white p-3.5 rounded-xl border border-[#222] focus:border-blue-500/50 outline-none transition-all font-bold text-sm placeholder-gray-600 text-center";
+  const labelClass = "block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wide text-center";
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 space-y-5">
+    // CONTAINER PRINCIPAL: 
+    // - overflow-hidden: Corta os botões quadrados para encaixar no arredondado
+    // - flex-col: Para empilhar botões em cima e form embaixo
+    <div className="w-full bg-[#161616] rounded-[24px] shadow-2xl border border-white/5 mx-auto overflow-hidden flex flex-col">
       
-      {/* Seletor de Tipo (Compra/Venda) */}
-      <div className="grid grid-cols-2 gap-3 p-1 bg-[#1A1F2E] rounded-xl border border-gray-700">
-        <button
-          type="button"
-          onClick={() => setType('buy')}
-          className={`py-2 rounded-lg text-sm font-bold transition-all ${type === 'buy' ? 'bg-emerald-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+      {/* ÁREA DOS BOTÕES (Topo) */}
+      {/* w-full e sem padding para encostar nas bordas */}
+      <div className="flex w-full h-16">
+        <button 
+          type="button" 
+          onClick={() => setType('buy')} 
+          className={`flex-1 text-sm font-black uppercase tracking-widest transition-all duration-300
+            ${type === 'buy' 
+              ? 'bg-emerald-600 text-white' 
+              : 'bg-[#0f0f0f] text-gray-600 hover:text-gray-400 border-b border-r border-[#222]'
+            }`}
         >
-          Comprar
+          Compra
         </button>
-        <button
-          type="button"
-          onClick={() => setType('sell')}
-          className={`py-2 rounded-lg text-sm font-bold transition-all ${type === 'sell' ? 'bg-rose-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
+        
+        <button 
+          type="button" 
+          onClick={() => setType('sell')} 
+          className={`flex-1 text-sm font-black uppercase tracking-widest transition-all duration-300
+            ${type === 'sell' 
+              ? 'bg-rose-600 text-white' 
+              : 'bg-[#0f0f0f] text-gray-600 hover:text-gray-400 border-b border-l border-[#222]'
+            }`}
         >
-          Vender
+          Venda
         </button>
       </div>
 
-      <div className="space-y-4">
+      {/* ÁREA DO FORMULÁRIO (Corpo) */}
+      {/* Aqui colocamos o padding (p-6) para o conteúdo não colar na borda */}
+      <form onSubmit={handleSubmit} className="p-6 space-y-5 flex flex-col justify-center h-full">
+        
         <div>
           <label className={labelClass}>Data</label>
-          <input type="date" required value={date} onChange={(e) => setDate(e.target.value)} className={inputClass} />
+          <input type="date" required value={date} onChange={(e) => setDate(e.target.value)} className={`${inputClass} text-gray-400`} />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className={labelClass}>Moeda (Ex: BTC)</label>
+            <label className={labelClass}>Ativo</label>
             <input type="text" required value={symbol} onChange={(e) => setSymbol(e.target.value)} className={`${inputClass} uppercase`} placeholder="BTC" />
           </div>
           <div>
-            <label className={labelClass}>Quantidade</label>
+            <label className={labelClass}>Quantia</label>
             <input type="number" step="any" required value={amount} onChange={(e) => setAmount(e.target.value)} className={inputClass} placeholder="0.00" />
           </div>
         </div>
 
-        {/* Campo de Preço com Feedback Visual */}
-        <div className={`p-4 rounded-xl border flex justify-between items-center transition-colors ${price ? 'bg-blue-500/10 border-blue-500/30' : 'bg-[#1A1F2E] border-gray-700'}`}>
-          <span className="text-sm text-gray-400 font-medium">Preço Unitário:</span>
-          {fetchingPrice ? (
-             <span className="text-yellow-500 text-xs font-bold animate-pulse">Buscando...</span>
-          ) : (
-             <span className="text-blue-300 font-mono font-bold text-lg">$ {price || '---'}</span>
-          )}
+        {/* Preço */}
+        <div className="flex justify-between items-center px-4 py-3 bg-[#0a0a0a] rounded-xl border border-[#222]">
+           <span className="text-[10px] text-gray-500 font-bold uppercase">Cotação:</span>
+           {fetchingPrice ? <span className="text-yellow-600 text-xs animate-pulse font-bold">...</span> : <span className="text-blue-400 font-mono font-bold text-lg">{price ? `$${price}` : '-'}</span>}
         </div>
-      </div>
 
-      <button 
-        type="submit" 
-        disabled={loading || !price} 
-        className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-2"
-      >
-        {loading ? 'Salvando...' : type === 'buy' ? 'Confirmar Compra' : 'Confirmar Venda'}
-      </button>
-    </form>
+        <button type="submit" disabled={loading || !price} className={`w-full py-4 font-bold rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-[0.15em] text-xs mt-2 text-white
+          ${type === 'buy' ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/20' : 'bg-rose-600 hover:bg-rose-500 shadow-rose-900/20'}
+        `}>
+          {loading ? 'Processando...' : 'Confirmar'}
+        </button>
+      </form>
+    </div>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-// Mapeamento para API do CoinGecko
 const COIN_MAP: { [key: string]: string } = {
   btc: 'bitcoin', eth: 'ethereum', sol: 'solana', ada: 'cardano',
   doge: 'dogecoin', dot: 'polkadot', matic: 'matic-network',
@@ -9,13 +8,20 @@ const COIN_MAP: { [key: string]: string } = {
 };
 
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+  // Configura para compactar números muito grandes se necessário (ex: 1.2M), 
+  // mas mantém padrão para valores normais.
+  return new Intl.NumberFormat('en-US', { 
+    style: 'currency', 
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(value);
 };
 
 export default function SummaryCards({ transactions }: { transactions: any[] }) {
-  const [balance, setBalance] = useState(0); // Valor atual de mercado
-  const [invested, setInvested] = useState(0); // Total gasto em compras
-  const [profit, setProfit] = useState(0);     // Lucro (Saldo + Vendas - Compras)
+  const [balance, setBalance] = useState(0);
+  const [invested, setInvested] = useState(0);
+  const [profit, setProfit] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,14 +31,12 @@ export default function SummaryCards({ transactions }: { transactions: any[] }) 
         return;
       }
 
-      // 1. Calcular Holdings (Quantidade de moedas) e Fluxo de Caixa
       const holdings: { [key: string]: number } = {};
-      let totalBuys = 0; // Tudo que saiu do bolso
-      let totalSells = 0; // Tudo que voltou pro bolso
+      let totalBuys = 0;
+      let totalSells = 0;
 
       transactions.forEach(t => {
         const sym = t.symbol.toLowerCase();
-        
         if (t.type === 'buy') {
           holdings[sym] = (holdings[sym] || 0) + t.amount;
           totalBuys += (t.amount * t.price);
@@ -42,32 +46,26 @@ export default function SummaryCards({ transactions }: { transactions: any[] }) 
         }
       });
 
-      // 2. Buscar preços atuais apenas das moedas que você possui saldo > 0
       const activeSymbols = Object.keys(holdings).filter(sym => holdings[sym] > 0);
       let currentPortfolioValue = 0;
 
       if (activeSymbols.length > 0) {
         const ids = activeSymbols.map(sym => COIN_MAP[sym] || sym).join(',');
-        
         try {
           const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`);
           const prices = await res.json();
-
-          // 3. Calcular valor atual do portfólio
           activeSymbols.forEach(sym => {
             const coinId = COIN_MAP[sym] || sym;
             const currentPrice = prices[coinId]?.usd || 0;
             currentPortfolioValue += (holdings[sym] * currentPrice);
           });
         } catch (error) {
-          console.error("Erro ao atualizar preços no card:", error);
-          // Fallback: Se a API falhar, o saldo fica zerado ou mantém o anterior para não quebrar
+          console.error("Erro cards:", error);
         }
       }
 
       setBalance(currentPortfolioValue);
       setInvested(totalBuys);
-      // Lucro Real = (O que tenho hoje + O que já saquei) - (O que gastei)
       setProfit((currentPortfolioValue + totalSells) - totalBuys);
       setLoading(false);
     }
@@ -75,38 +73,40 @@ export default function SummaryCards({ transactions }: { transactions: any[] }) 
     calculateData();
   }, [transactions]);
 
-  // Mantive o estilo que você já tinha ou o que definimos antes, sem inventar moda visual nova
-  const cardStyle = "flex flex-col justify-center items-center text-center p-6 rounded-3xl bg-[#1A1F2E] shadow-lg min-h-[120px] border border-white/5";
+  // Aumentei o min-h para 150px para dar mais ar para as letras grandes
+  const baseCardStyle = "flex flex-col justify-center items-center text-center p-4 rounded-[32px] shadow-lg min-h-[150px]";
 
-  if (loading) return <div className="w-full text-center py-10 text-gray-500">Calculando patrimônio...</div>;
+  // Classes de texto ajustadas:
+  // Título: text-xs (celular) -> text-sm (telas maiores)
+  // Valor: text-xl (celular muito pequeno) -> text-2xl (celular normal) -> text-4xl ou 5xl (desktop)
+  const labelClass = "text-xs md:text-sm font-bold uppercase tracking-widest mb-2 opacity-80";
+  const valueClass = "text-2xl md:text-3xl lg:text-5xl font-black tracking-tight";
+
+  if (loading) return <div className="w-full text-center py-4 text-gray-500">...</div>;
 
   return (
-    // MUDANÇA AQUI: Tirei o "grid-cols-1 md:" e deixei fixo "grid-cols-3"
-    // Isso obriga a ficar sempre na mesma linha horizontal, dividida em 3 partes
     <div className="grid grid-cols-3 gap-6 w-full">
       
       {/* Saldo Atual */}
-      <div className={cardStyle}>
-        <p className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-1">Saldo Atual</p>
-        <p className="text-3xl font-extrabold text-blue-50">{formatCurrency(balance)}</p>
+      <div className={`${baseCardStyle} bg-[#172554]`}>
+        <p className={`${labelClass} text-blue-200`}>Saldo Atual</p>
+        <p className={`${valueClass} text-white`}>{formatCurrency(balance)}</p>
       </div>
 
       {/* Total Aportado */}
-      <div className={cardStyle}>
-        <p className="text-purple-400 text-xs font-bold uppercase tracking-widest mb-1">Total Aportado</p>
-        <p className="text-3xl font-extrabold text-purple-50">{formatCurrency(invested)}</p>
+      <div className={`${baseCardStyle} bg-[#2e1065]`}>
+        <p className={`${labelClass} text-purple-200`}>Aportado</p>
+        <p className={`${valueClass} text-white`}>{formatCurrency(invested)}</p>
       </div>
 
-      {/* Resultado Geral */}
-      <div className={cardStyle}>
-        <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${profit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-          Resultado Geral
+      {/* Lucro/Prejuízo */}
+      <div className={`${baseCardStyle} ${profit >= 0 ? 'bg-[#064e3b]' : 'bg-[#881337]'}`}>
+        <p className={`${labelClass} ${profit >= 0 ? 'text-emerald-200' : 'text-rose-200'}`}>
+          Lucro/Prejuízo
         </p>
-        <div className="flex items-end gap-2">
-          <p className={`text-3xl font-extrabold ${profit >= 0 ? 'text-emerald-50' : 'text-rose-50'}`}>
-            {profit > 0 ? '+' : ''}{formatCurrency(profit)}
-          </p>
-        </div>
+        <p className={`${valueClass} text-white`}>
+          {profit > 0 ? '+' : ''}{formatCurrency(profit)}
+        </p>
       </div>
     </div>
   );
