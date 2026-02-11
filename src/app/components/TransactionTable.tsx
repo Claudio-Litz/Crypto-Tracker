@@ -15,49 +15,49 @@ export default function TransactionTable({ transactions }: { transactions: any[]
     if (!error) window.location.reload();
   }
 
-  if (!transactions?.length) return <p className="text-white/20 text-sm py-10 text-center uppercase tracking-widest">Sem registros.</p>;
+  if (!transactions?.length) return <p className="text-white/20 text-xs sm:text-sm py-6 sm:py-10 text-center uppercase tracking-widest">Sem registros.</p>;
 
   return (
-    <div className="w-full bg-[#151515] rounded-[24px] p-4 border border-white/5 shadow-inner">
+    <div className="w-full bg-[#151515] rounded-[16px] sm:rounded-[20px] md:rounded-[24px] p-2 sm:p-3 md:p-4 border border-white/5 shadow-inner">
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-separate border-spacing-y-3">
+        <table className="w-full text-left border-separate border-spacing-y-2 sm:border-spacing-y-3">
           
-          <thead className="text-gray-500 text-xs md:text-sm font-bold uppercase tracking-wider">
+          <thead className="text-gray-500 text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider">
             <tr>
-              <th className="pb-2 text-center">Data</th>
-              <th className="pb-2 text-center">Ativo</th>
-              <th className="pb-2 text-center">Tipo</th>
-              <th className="pb-2 text-center">Valor Total</th>
-              <th className="pb-2 text-center w-12"></th>
+              <th className="pb-1 sm:pb-2 text-center">Data</th>
+              <th className="pb-1 sm:pb-2 text-center">Ativo</th>
+              <th className="pb-1 sm:pb-2 text-center">Tipo</th>
+              <th className="pb-1 sm:pb-2 text-center">Valor Total</th>
+              <th className="pb-1 sm:pb-2 text-center w-10 sm:w-12"></th>
             </tr>
           </thead>
 
           <tbody className="text-gray-200">
             {transactions.map((t) => (
-              <tr key={t.id} className="bg-[#0f0f0f] hover:bg-[#1a1a1a] transition-all group shadow-sm rounded-xl">
+              <tr key={t.id} className="bg-[#0f0f0f] hover:bg-[#1a1a1a] transition-all group shadow-sm rounded-lg sm:rounded-xl">
                 
                 {/* Data - Fonte maior */}
-                <td className="py-5 px-4 text-center rounded-l-xl font-medium text-sm md:text-base text-gray-400">
+                <td className="py-3 sm:py-4 md:py-5 px-2 sm:px-3 md:px-4 text-center rounded-l-lg sm:rounded-l-xl font-medium text-[10px] sm:text-xs md:text-sm text-gray-400">
                   {formatDate(t.date).slice(0,5)}
                 </td>
                 
                 {/* Ativo - Fonte maior e destaque */}
-                <td className="py-5 px-4 text-center font-black text-sm md:text-base text-white">
+                <td className="py-3 sm:py-4 md:py-5 px-2 sm:px-3 md:px-4 text-center font-black text-[10px] sm:text-xs md:text-base text-white">
                     {t.symbol.toUpperCase()}
                 </td>
                 
-                <td className="py-5 px-4 text-center">
-                   <span className={`inline-block px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide border ${t.type === 'buy' ? 'bg-emerald-900/20 text-emerald-400 border-emerald-500/20' : 'bg-rose-900/20 text-rose-400 border-rose-500/20'}`}>
+                <td className="py-3 sm:py-4 md:py-5 px-2 sm:px-3 md:px-4 text-center">
+                   <span className={`inline-block px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[8px] sm:text-xs font-bold uppercase tracking-wide border ${t.type === 'buy' ? 'bg-emerald-900/20 text-emerald-400 border-emerald-500/20' : 'bg-rose-900/20 text-rose-400 border-rose-500/20'}`}>
                       {t.type === 'buy' ? 'Compra' : 'Venda'}
                    </span>
                 </td>
                 
-                <td className="py-5 px-4 text-center font-mono font-bold text-sm md:text-base text-gray-300">
+                <td className="py-3 sm:py-4 md:py-5 px-2 sm:px-3 md:px-4 text-center font-mono font-bold text-[10px] sm:text-xs md:text-base text-gray-300">
                   ${(t.price * t.amount).toFixed(2)}
                 </td>
                 
-                <td className="py-5 px-4 text-center rounded-r-xl">
-                  <button onClick={() => handleDelete(t.id)} className="text-gray-600 hover:text-red-500 transition-colors p-2" title="Excluir">
+                <td className="py-3 sm:py-4 md:py-5 px-2 sm:px-3 md:px-4 text-center rounded-r-lg sm:rounded-r-xl">
+                  <button onClick={() => handleDelete(t.id)} className="text-gray-600 hover:text-red-500 transition-colors p-1 sm:p-2 text-sm sm:text-base" title="Excluir">
                     ✕
                   </button>
                 </td>

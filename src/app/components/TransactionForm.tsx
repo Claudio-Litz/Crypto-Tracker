@@ -68,22 +68,22 @@ export default function TransactionForm() {
   }
 
   // Estilos
-  const inputClass = "w-full bg-[#0a0a0a] text-white p-3.5 rounded-xl border border-[#222] focus:border-blue-500/50 outline-none transition-all font-bold text-sm placeholder-gray-600 text-center";
-  const labelClass = "block text-[10px] font-bold text-gray-500 mb-1.5 uppercase tracking-wide text-center";
+  const inputClass = "w-full bg-[#0a0a0a] text-white p-2 sm:p-2.5 md:p-3.5 rounded-lg sm:rounded-xl border border-[#222] focus:border-blue-500/50 outline-none transition-all font-bold text-xs sm:text-sm placeholder-gray-600 text-center";
+  const labelClass = "block text-[8px] sm:text-[9px] md:text-[10px] font-bold text-gray-500 mb-1 sm:mb-1.5 uppercase tracking-wide text-center";
 
   return (
     // CONTAINER PRINCIPAL: 
     // - overflow-hidden: Corta os botões quadrados para encaixar no arredondado
     // - flex-col: Para empilhar botões em cima e form embaixo
-    <div className="w-full bg-[#161616] rounded-[24px] shadow-2xl border border-white/5 mx-auto overflow-hidden flex flex-col">
+    <div className="w-full bg-[#161616] rounded-[16px] sm:rounded-[20px] md:rounded-[24px] shadow-2xl border border-white/5 mx-auto overflow-hidden flex flex-col">
       
       {/* ÁREA DOS BOTÕES (Topo) */}
       {/* w-full e sem padding para encostar nas bordas */}
-      <div className="flex w-full h-16">
+      <div className="flex w-full h-12 sm:h-14 md:h-16">
         <button 
           type="button" 
           onClick={() => setType('buy')} 
-          className={`flex-1 text-sm font-black uppercase tracking-widest transition-all duration-300
+          className={`flex-1 text-xs sm:text-sm md:text-base font-black uppercase tracking-widest transition-all duration-300
             ${type === 'buy' 
               ? 'bg-emerald-600 text-white' 
               : 'bg-[#0f0f0f] text-gray-600 hover:text-gray-400 border-b border-r border-[#222]'
@@ -95,7 +95,7 @@ export default function TransactionForm() {
         <button 
           type="button" 
           onClick={() => setType('sell')} 
-          className={`flex-1 text-sm font-black uppercase tracking-widest transition-all duration-300
+          className={`flex-1 text-xs sm:text-sm md:text-base font-black uppercase tracking-widest transition-all duration-300
             ${type === 'sell' 
               ? 'bg-rose-600 text-white' 
               : 'bg-[#0f0f0f] text-gray-600 hover:text-gray-400 border-b border-l border-[#222]'
@@ -107,14 +107,14 @@ export default function TransactionForm() {
 
       {/* ÁREA DO FORMULÁRIO (Corpo) */}
       {/* Aqui colocamos o padding (p-6) para o conteúdo não colar na borda */}
-      <form onSubmit={handleSubmit} className="p-6 space-y-5 flex flex-col justify-center h-full">
+      <form onSubmit={handleSubmit} className="p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4 md:space-y-5 flex flex-col justify-center h-full">
         
         <div>
           <label className={labelClass}>Data</label>
           <input type="date" required value={date} onChange={(e) => setDate(e.target.value)} className={`${inputClass} text-gray-400`} />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
           <div>
             <label className={labelClass}>Ativo</label>
             <input type="text" required value={symbol} onChange={(e) => setSymbol(e.target.value)} className={`${inputClass} uppercase`} placeholder="BTC" />
@@ -126,12 +126,12 @@ export default function TransactionForm() {
         </div>
 
         {/* Preço */}
-        <div className="flex justify-between items-center px-4 py-3 bg-[#0a0a0a] rounded-xl border border-[#222]">
-           <span className="text-[10px] text-gray-500 font-bold uppercase">Cotação:</span>
-           {fetchingPrice ? <span className="text-yellow-600 text-xs animate-pulse font-bold">...</span> : <span className="text-blue-400 font-mono font-bold text-lg">{price ? `$${price}` : '-'}</span>}
+        <div className="flex justify-between items-center px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 bg-[#0a0a0a] rounded-lg sm:rounded-xl border border-[#222]">
+           <span className="text-[8px] sm:text-[9px] md:text-[10px] text-gray-500 font-bold uppercase">Cotação:</span>
+           {fetchingPrice ? <span className="text-yellow-600 text-xs animate-pulse font-bold">...</span> : <span className="text-blue-400 font-mono font-bold text-base sm:text-lg">{price ? `$${price}` : '-'}</span>}
         </div>
 
-        <button type="submit" disabled={loading || !price} className={`w-full py-4 font-bold rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-[0.15em] text-xs mt-2 text-white
+        <button type="submit" disabled={loading || !price} className={`w-full py-2.5 sm:py-3 md:py-4 font-bold rounded-lg sm:rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-[0.12em] sm:tracking-[0.15em] text-xs mt-2 text-white
           ${type === 'buy' ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/20' : 'bg-rose-600 hover:bg-rose-500 shadow-rose-900/20'}
         `}>
           {loading ? 'Processando...' : 'Confirmar'}

@@ -42,7 +42,7 @@ export default function AllocationChart({ transactions }: { transactions: any[] 
     .sort((a, b) => b.value - a.value); // Ordena do maior para o menor
 
   return (
-    <div className="w-full h-[350px] relative"> 
+    <div className="w-full h-[250px] sm:h-[300px] md:h-[350px] relative"> 
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
@@ -50,8 +50,8 @@ export default function AllocationChart({ transactions }: { transactions: any[] 
             cx="50%"
             cy="50%"
             // AQUI: Aumentei o raio interno e externo para preencher o espaço
-            innerRadius={80}
-            outerRadius={130}
+            innerRadius={50}
+            outerRadius={90}
             paddingAngle={5}
             dataKey="value"
             stroke="none"

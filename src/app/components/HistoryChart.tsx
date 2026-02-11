@@ -138,26 +138,26 @@ export default function HistoryChart({ transactions }: { transactions: Transacti
   // Renderização de Erro com estilo
   if (errorMsg) {
       return (
-        <div className="w-full h-[300px] flex flex-col items-center justify-center text-center p-6 border border-yellow-500/20 rounded-xl bg-yellow-500/5">
-            <span className="text-3xl mb-2">⏳</span>
-            <p className="text-yellow-500 font-bold mb-1">Aguardando API</p>
-            <p className="text-gray-400 text-xs">{errorMsg}</p>
+        <div className="w-full h-[250px] sm:h-[300px] md:h-[350px] flex flex-col items-center justify-center text-center p-3 sm:p-6 border border-yellow-500/20 rounded-lg sm:rounded-xl bg-yellow-500/5">
+            <span className="text-2xl sm:text-3xl mb-2">⏳</span>
+            <p className="text-yellow-500 font-bold mb-1 text-sm">Aguardando API</p>
+            <p className="text-gray-400 text-[10px] sm:text-xs">{errorMsg}</p>
         </div>
       );
   }
 
-  if (loading) return <div className="flex h-[300px] items-center justify-center text-blue-400 animate-pulse font-bold tracking-widest uppercase text-xs">Carregando Gráfico...</div>;
-  if (data.length === 0) return <div className="flex h-[300px] items-center justify-center text-gray-500">Sem dados para exibir.</div>;
+  if (loading) return <div className="flex h-[250px] sm:h-[300px] md:h-[350px] items-center justify-center text-blue-400 animate-pulse font-bold tracking-widest uppercase text-[10px] sm:text-xs">Carregando Gráfico...</div>;
+  if (data.length === 0) return <div className="flex h-[250px] sm:h-[300px] md:h-[350px] items-center justify-center text-gray-500 text-sm">Sem dados para exibir.</div>;
 
   return (
     <div className="w-full flex flex-col">
-      <div className="mb-4 text-center lg:text-left pl-2">
-         <h3 className="text-white font-bold text-2xl">Evolução Patrimonial</h3>
-         <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold">Histórico de Valorização</p>
+      <div className="mb-2 sm:mb-4 text-center lg:text-left pl-1 sm:pl-2">
+         <h3 className="text-white font-bold text-lg sm:text-xl md:text-2xl">Evolução Patrimonial</h3>
+         <p className="text-white/40 text-[8px] sm:text-[9px] md:text-[10px] uppercase tracking-widest font-bold">Histórico de Valorização</p>
       </div>
       
       {/* SOLUÇÃO DO PROBLEMA: Altura fixa definida aqui (h-[350px]) */}
-      <div className="w-full h-[350px] relative">
+      <div className="w-full h-[250px] sm:h-[300px] md:h-[350px] relative">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <defs>
@@ -172,8 +172,8 @@ export default function HistoryChart({ transactions }: { transactions: Transacti
             <XAxis 
               dataKey="date" 
               stroke="#64748b" 
-              tick={{fontSize: 11, fontWeight: 'bold'}}
-              minTickGap={50}
+              tick={{fontSize: 9, fontWeight: 'bold'}}
+              minTickGap={40}
               axisLine={false}
               tickLine={false}
               dy={10}

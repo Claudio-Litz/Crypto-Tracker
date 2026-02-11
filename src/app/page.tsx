@@ -19,23 +19,23 @@ export default async function Home() {
   const txData = transactions || [];
 
   // Configuração Base dos Blocos Principais
-  const baseBlock = "rounded-[40px] p-6 shadow-2xl border-none flex flex-col justify-center";
+  const baseBlock = "rounded-[20px] sm:rounded-[30px] md:rounded-[40px] p-3 sm:p-4 md:p-6 shadow-2xl border-none flex flex-col justify-center";
 
   // Configuração dos Títulos
-  const titleClass = "text-xl font-bold text-white mb-1 text-center";
-  const subTitleClass = "text-white/40 text-[10px] text-center mb-6 uppercase tracking-[0.2em] font-bold";
+  const titleClass = "text-lg sm:text-xl md:text-2xl font-bold text-white mb-1 text-center";
+  const subTitleClass = "text-white/40 text-[8px] sm:text-[9px] md:text-[10px] text-center mb-3 sm:mb-4 md:mb-6 uppercase tracking-[0.15em] sm:tracking-[0.2em] font-bold";
 
   return (
-    <main className="min-h-screen bg-[#020202] text-slate-200 font-sans pb-24 relative selection:bg-indigo-500/30">
+    <main className="min-h-screen bg-[#020202] text-slate-200 font-sans pb-16 sm:pb-24 relative selection:bg-indigo-500/30">
       
       {/* Luz de fundo suave */}
       <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[500px] bg-blue-900/10 blur-[150px] rounded-full pointer-events-none" />
       <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[500px] bg-purple-900/10 blur-[150px] rounded-full pointer-events-none" />
 
-      <div className="max-w-[1600px] mx-auto px-6 pt-8 relative z-10">
+      <div className="max-w-[1600px] mx-auto px-3 sm:px-4 md:px-6 pt-4 sm:pt-8 relative z-10">
         <Header />
 
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-4 sm:gap-6 md:gap-8">
           
           {/* 1. SECTION: CARDS (Topo) */}
           <section>
@@ -43,7 +43,7 @@ export default async function Home() {
           </section>
 
           {/* 2. SECTION: GRÁFICOS (Lado a Lado) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 md:gap-8">
             
             {/* Gráfico de Evolução (Ocupa 8 colunas - Mais largo) */}
             <div className={`lg:col-span-8 ${baseBlock} bg-[#080b14]`}>
@@ -64,7 +64,7 @@ export default async function Home() {
 
           {/* 3. SECTION: OPERACIONAL (Formulário + Tabela) */}
           {/* Aqui atendemos seu pedido: Form na Esquerda, Tabela na Direita */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 md:gap-8 items-start">
             
             {/* Formulário (Esquerda - 4 Colunas - Mais estreito) */}
             <div className={`lg:col-span-4 ${baseBlock} bg-[#0a0a0a]`}>

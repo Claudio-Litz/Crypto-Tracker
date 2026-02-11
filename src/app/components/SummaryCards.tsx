@@ -74,18 +74,18 @@ export default function SummaryCards({ transactions }: { transactions: any[] }) 
   }, [transactions]);
 
   // Aumentei o min-h para 150px para dar mais ar para as letras grandes
-  const baseCardStyle = "flex flex-col justify-center items-center text-center p-4 rounded-[32px] shadow-lg min-h-[150px]";
+  const baseCardStyle = "flex flex-col justify-center items-center text-center p-2 sm:p-3 md:p-4 rounded-[20px] sm:rounded-[28px] md:rounded-[32px] shadow-lg min-h-[100px] sm:min-h-[120px] md:min-h-[150px]";
 
   // Classes de texto ajustadas:
   // Título: text-xs (celular) -> text-sm (telas maiores)
   // Valor: text-xl (celular muito pequeno) -> text-2xl (celular normal) -> text-4xl ou 5xl (desktop)
-  const labelClass = "text-xs md:text-sm font-bold uppercase tracking-widest mb-2 opacity-80";
-  const valueClass = "text-2xl md:text-3xl lg:text-5xl font-black tracking-tight";
+  const labelClass = "text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest mb-1 sm:mb-2 opacity-80";
+  const valueClass = "text-base sm:text-xl md:text-3xl lg:text-5xl font-black tracking-tight";
 
-  if (loading) return <div className="w-full text-center py-4 text-gray-500">...</div>;
+  if (loading) return <div className="w-full text-center py-2 sm:py-4 text-gray-500">...</div>;
 
   return (
-    <div className="grid grid-cols-3 gap-6 w-full">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 md:gap-6 w-full">
       
       {/* Saldo Atual */}
       <div className={`${baseCardStyle} bg-[#172554]`}>
