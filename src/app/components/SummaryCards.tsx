@@ -85,29 +85,28 @@ export default function SummaryCards({ transactions }: { transactions: any[] }) 
   if (loading) return <div className="w-full text-center py-2 sm:py-4 text-gray-500">...</div>;
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 md:gap-6 w-full">
-      
-      {/* Saldo Atual */}
-      <div className={`${baseCardStyle} bg-[#172554]`}>
-        <p className={`${labelClass} text-blue-200`}>Saldo Atual</p>
-        <p className={`${valueClass} text-white`}>{formatCurrency(balance)}</p>
-      </div>
-
-      {/* Total Aportado */}
-      <div className={`${baseCardStyle} bg-[#2e1065]`}>
-        <p className={`${labelClass} text-purple-200`}>Aportado</p>
-        <p className={`${valueClass} text-white`}>{formatCurrency(invested)}</p>
-      </div>
-
-      {/* Lucro/Prejuízo */}
-      <div className={`${baseCardStyle} ${profit >= 0 ? 'bg-[#064e3b]' : 'bg-[#881337]'}`}>
-        <p className={`${labelClass} ${profit >= 0 ? 'text-emerald-200' : 'text-rose-200'}`}>
-          Lucro/Prejuízo
-        </p>
-        <p className={`${valueClass} text-white`}>
-          {profit > 0 ? '+' : ''}{formatCurrency(profit)}
-        </p>
-      </div>
+  <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-6 w-full">
+    {/* Saldo Atual */}
+    <div className={`${baseCardStyle} bg-[#172554]`}>
+      <p className={`${labelClass} text-blue-200`}>Saldo</p> {/* Shortened for mobile */}
+      <p className={`${valueClass} text-white`}>{formatCurrency(balance)}</p>
     </div>
+
+    {/* Total Aportado */}
+    <div className={`${baseCardStyle} bg-[#2e1065]`}>
+      <p className={`${labelClass} text-purple-200`}>Aportado</p>
+      <p className={`${valueClass} text-white`}>{formatCurrency(invested)}</p>
+    </div>
+
+    {/* Lucro/Prejuízo */}
+    <div className={`${baseCardStyle} ${profit >= 0 ? 'bg-[#064e3b]' : 'bg-[#881337]'}`}>
+      <p className={`${labelClass} ${profit >= 0 ? 'text-emerald-200' : 'text-rose-200'}`}>
+        Lucro
+      </p> {/* Shortened for mobile */}
+      <p className={`${valueClass} text-white`}>
+         {profit > 0 ? '+' : ''}{formatCurrency(profit)}
+       </p>
+     </div>
+   </div>
   );
 }

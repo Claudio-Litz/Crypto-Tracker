@@ -1,6 +1,6 @@
 'use client';
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface Transaction {
   symbol: string;
@@ -15,9 +15,9 @@ export default function AllocationChart({ transactions }: { transactions: any[] 
   
   if (!transactions || transactions.length === 0) {
     return (
-        <div className="h-full flex items-center justify-center text-gray-500 text-sm">
-            Sem dados para o gráfico.
-        </div>
+      <div className="flex items-center justify-center text-gray-500 text-sm h-[250px]">
+        Sem dados para o gráfico.
+      </div>
     );
   }
 
@@ -39,18 +39,18 @@ export default function AllocationChart({ transactions }: { transactions: any[] 
       name: sym,
       value: holdings[sym] * currentPrices[sym]
     }))
-    .sort((a, b) => b.value - a.value); // Ordena do maior para o menor
+    .sort((a, b) => b.value - a.value);
 
   return (
-    <div className="w-full h-[250px] sm:h-[300px] md:h-[350px] relative"> 
+    /* THE FIX: Explicit style height prevents Recharts from collapsing to 0 */
+    <div className="w-full" style={{ height: 280, minHeight: 280 }}> 
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
-            // AQUI: Aumentei o raio interno e externo para preencher o espaço
-            innerRadius={50}
+            innerRadius={60}
             outerRadius={90}
             paddingAngle={5}
             dataKey="value"
@@ -61,15 +61,9 @@ export default function AllocationChart({ transactions }: { transactions: any[] 
             ))}
           </Pie>
           <Tooltip 
-              contentStyle={{ backgroundColor: '#1F2937', borderColor: '#374151', borderRadius: '12px', color: '#fff' }}
-              itemStyle={{ color: '#fff' }}
-              formatter={(value: any) => [`$${value.toFixed(2)}`, 'Valor']}
-          />
-          <Legend 
-            verticalAlign="bottom" 
-            height={36} 
-            iconType="circle"
-            formatter={(value) => <span className="text-slate-300 ml-1 mr-4">{value}</span>}
+            contentStyle={{ backgroundColor: '#1F2937', borderColor: '#374151', borderRadius: '12px', color: '#fff', fontSize: '12px' }}
+            itemStyle={{ color: '#fff' }}
+            formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Valor']}
           />
         </PieChart>
       </ResponsiveContainer>
